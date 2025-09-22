@@ -1,5 +1,6 @@
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
 
 # Although we are using an in-memory DB, we import schemas and security
@@ -9,6 +10,24 @@ from . import security
 
 # --- App Initialization ---
 app = FastAPI(title="MRPT Backend API")
+
+# --- CORS Middleware Configuration ---
+# This is crucial for allowing the frontend (running on a different port)
+# to communicate with the backend.
+origins = [
+    "http://localhost",
+    "http://localhost:5173",  # Default port for Vite dev server
+    "http://127.0.0.1:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
+
 
 # --- In-Memory "Database" for demonstration ---
 # This dictionary will act as our user database.
